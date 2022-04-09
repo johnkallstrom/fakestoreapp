@@ -1,7 +1,5 @@
 ## Project setup
 
-## fakestoreapp
-
 ### Install dependencies
 ```
 npm install
