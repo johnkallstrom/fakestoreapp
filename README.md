@@ -1,6 +1,6 @@
 ## Project setup
 
-##fakestoreapp
+## fakestoreapp
 
 ### Install dependencies
 ```
