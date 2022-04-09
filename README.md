@@ -1,14 +1,16 @@
 ## Project setup
+
+### Install dependencies
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Run development
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### Build for production
 ```
 npm run build
 ```
