@@ -1,7 +1,7 @@
 <template>
   <Navbar />
   <router-view></router-view>
-  <Footer />
+  <Footer title="Fake Store App" />
 </template>
 
 <script lang="ts">

@@ -7,11 +7,13 @@
         <div class="row mb-3">
           <div class="col-md-3">
             <label>Sort</label>
-            <select class="form-select">
+            <select class="form-select" v-model="selectedSort">
               <option
                 v-for="option in sortOptions"
                 :value="option.value"
                 :key="option.value"
+                :disabled="option.disabled"
+                :selected="option.selected"
               >
                 {{ option.text }}
               </option>
@@ -19,13 +21,15 @@
           </div>
           <div class="col-md-3">
             <label>Category</label>
-            <select class="form-select">
+            <select class="form-select" v-model="selectedCategory">
               <option
-                v-for="category in categories"
-                :value="category.name"
-                :key="category.id"
+                v-for="option in categoryOptions"
+                :value="option.value"
+                :key="option.value"
+                :disabled="option.disabled"
+                :selected="option.selected"
               >
-                {{ category.name }}
+                {{ option.text }}
               </option>
             </select>
           </div>
@@ -53,6 +57,7 @@ import ProductService from '../services/ProductService';
 import Card from '../components/shared/Card.vue';
 import Spinner from '../components/shared/Spinner.vue';
 import ProductQueryParameters from '@/parameters/ProductQueryParameters';
+import SelectOption from '../rendering/SelectOption';
 
 export default defineComponent({
   name: 'Products',
@@ -63,36 +68,37 @@ export default defineComponent({
   data() {
     return {
       products: [] as Array<Product>,
-      categories: [] as Array<Category>,
-      sortOptions: [] as any,
+      categoryOptions: [] as Array<SelectOption>,
+      sortOptions: [] as Array<SelectOption>,
+      selectedSort: 'default',
+      selectedCategory: 'default',
     };
   },
-  methods: {
-    async setupProducts() {
-      var productService = new ProductService();
-      this.products = await productService.getProducts(
-        new ProductQueryParameters()
-      );
-    },
-    async setupCategories() {
-      var categoryService = new CategoryService();
-      this.categories = await categoryService.getCategories();
-    },
-  },
   async created() {
-    await this.setupProducts();
-    await this.setupCategories();
+    var productService = new ProductService();
+    let parameters = new ProductQueryParameters();
+    this.products = await productService.getProducts(parameters);
 
-    this.sortOptions = [
-      {
-        value: 'asc',
-        text: 'Title - Ascending',
-      },
-      {
-        value: 'desc',
-        text: 'Title - Descending',
-      },
-    ];
+    var categoryService = new CategoryService();
+    let categories = await categoryService.getCategories();
+    this.categoryOptions = categories.map((item: Category, index: number) => {
+      // Add default value at first position in array
+      if (index === 0) {
+        let value = 'default';
+        let text = 'Choose category';
+        return new SelectOption(value, text, true, true);
+      } else {
+        let value = item.name.toLowerCase();
+        let text = item.name;
+        return new SelectOption(value, text);
+      }
+    });
+
+    this.sortOptions = new Array<SelectOption>(
+      new SelectOption('default', 'Choose sort', true, true),
+      new SelectOption('asc', 'Title Ascending'),
+      new SelectOption('desc', 'Title Descending')
+    );
   },
 });
 </script>

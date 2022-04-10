@@ -1,7 +1,7 @@
 <template>
   <footer class="footer mt-auto py-3 bg-light text-center">
     <div class="container">
-      <span class="text-muted">Fake Store App &copy; {{ year }}</span>
+      <span class="text-muted">{{ title }} &copy; {{ year }}</span>
     </div>
   </footer>
 </template>
@@ -11,6 +11,9 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'Footer',
+  props: {
+    title: String,
+  },
   data() {
     return {
       year: new Date().getFullYear(),
