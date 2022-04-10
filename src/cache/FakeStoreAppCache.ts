@@ -1,5 +1,6 @@
 // A cache which uses the javascript based Cache API to store requests in the browser
 // Used primarily to store requests from the Fake Store API which provides the data for this application
+// Inside Developer Tools under the 'Application' tab and the 'Cache' section all the stored requests can be viewed
 // https://developer.mozilla.org/en-US/docs/Web/API/Cache
 
 interface IFakeStoreAppCache {
