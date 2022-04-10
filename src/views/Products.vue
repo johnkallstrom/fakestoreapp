@@ -7,7 +7,11 @@
         <div class="row mb-3">
           <div class="col-md-3">
             <label>Sort</label>
-            <select class="form-select" v-model="selectedSort">
+            <select
+              class="form-select"
+              v-model="selectedSort"
+              v-on:change="onFilterChange"
+            >
               <option
                 v-for="option in sortOptions"
                 :value="option.value"
@@ -21,7 +25,11 @@
           </div>
           <div class="col-md-3">
             <label>Category</label>
-            <select class="form-select" v-model="selectedCategory">
+            <select
+              class="form-select"
+              v-model="selectedCategory"
+              v-on:change="onFilterChange"
+            >
               <option
                 v-for="option in categoryOptions"
                 :value="option.value"
@@ -32,6 +40,9 @@
                 {{ option.text }}
               </option>
             </select>
+          </div>
+          <div class="col-md-3 d-flex align-items-end">
+            <button class="btn btn-danger" @click="onFilterReset">Reset</button>
           </div>
         </div>
         <div class="row row-cols-1 row-cols-md-2 g-4">
@@ -67,6 +78,8 @@ export default defineComponent({
   },
   data() {
     return {
+      productService: new ProductService(),
+      categoryService: new CategoryService(),
       products: [] as Array<Product>,
       categoryOptions: [] as Array<SelectOption>,
       sortOptions: [] as Array<SelectOption>,
@@ -74,13 +87,32 @@ export default defineComponent({
       selectedCategory: 'default',
     };
   },
-  async created() {
-    var productService = new ProductService();
-    let parameters = new ProductQueryParameters();
-    this.products = await productService.getProducts(parameters);
+  methods: {
+    async onFilterChange() {
+      let params = new ProductQueryParameters();
 
-    var categoryService = new CategoryService();
-    let categories = await categoryService.getCategories();
+      if (this.selectedSort !== 'default') {
+        params.sort = this.selectedSort;
+      }
+
+      if (this.selectedCategory !== 'default') {
+        params.category = this.selectedCategory;
+      }
+
+      this.products = await this.productService.getProducts(params);
+    },
+    async onFilterReset() {
+      this.selectedSort = 'default';
+      this.selectedCategory = 'default';
+
+      let params = new ProductQueryParameters();
+      this.products = await this.productService.getProducts(params);
+    },
+  },
+  async created() {
+    this.products = await this.productService.getProducts();
+
+    let categories = await this.categoryService.getCategories();
     this.categoryOptions = categories.map((item: Category, index: number) => {
       return new SelectOption(item.name.toLowerCase(), item.name);
     });
