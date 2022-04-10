@@ -1,6 +1,7 @@
 import Product from '../models/Product';
 import Rating from '@/models/Rating';
 import ProductQueryParameters from '@/parameters/ProductQueryParameters';
+import { trimString, capitalizeFirstLetter } from '../utils/index';
 
 interface IProductService {
     getProducts(parameters?: ProductQueryParameters): Promise<Array<Product>>
@@ -9,9 +10,11 @@ interface IProductService {
 
 class ProductService implements IProductService {
     private readonly base_url: string;
+    private readonly max_description_limit: number;
 
     constructor() {
         this.base_url = process.env.VUE_APP_FAKE_STORE_API_BASE_URL;
+        this.max_description_limit = process.env.VUE_APP_MAX_DESCRIPTION_CHARACTER_LIMIT;
     }
 
     async getProducts(parameters?: ProductQueryParameters): Promise<Array<Product>> {
@@ -33,7 +36,10 @@ class ProductService implements IProductService {
         const data = await response.json();
         
         let products = data.map((item: any) => {
-            return new Product(item.id, item.title, item.price, item.description, item.category, item.image, new Rating(item.rating.count, item.rating.rate));
+            let description = item.description;
+            description = capitalizeFirstLetter(description);
+            description = trimString(description, this.max_description_limit) + '...';
+            return new Product(item.id, item.title, item.price, description, item.category, item.image, new Rating(item.rating.count, item.rating.rate));
         });
 
         return products;
