@@ -1,3 +1,7 @@
+// A cache which uses the javascript based Cache API to store requests in the browser
+// Used primarily to store requests from the Fake Store API which provides the data for this application
+// https://developer.mozilla.org/en-US/docs/Web/API/Cache
+
 interface IFakeStoreAppCache {
     add(request: Request): void
     addMultiple(request: Array<Request>): void
