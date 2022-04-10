@@ -54,9 +54,9 @@ import Category from '../models/Category';
 import CategoryService from '../services/CategoryService';
 import Product from '../models/Product';
 import ProductService from '../services/ProductService';
+import ProductQueryParameters from '@/parameters/ProductQueryParameters';
 import Card from '../components/shared/Card.vue';
 import Spinner from '../components/shared/Spinner.vue';
-import ProductQueryParameters from '@/parameters/ProductQueryParameters';
 import SelectOption from '../rendering/SelectOption';
 
 export default defineComponent({
@@ -82,22 +82,18 @@ export default defineComponent({
     var categoryService = new CategoryService();
     let categories = await categoryService.getCategories();
     this.categoryOptions = categories.map((item: Category, index: number) => {
-      // Add default value at first position in array
-      if (index === 0) {
-        let value = 'default';
-        let text = 'Choose category';
-        return new SelectOption(value, text, true, true);
-      } else {
-        let value = item.name.toLowerCase();
-        let text = item.name;
-        return new SelectOption(value, text);
-      }
+      return new SelectOption(item.name.toLowerCase(), item.name);
     });
+    this.categoryOptions.unshift(
+      new SelectOption('default', 'Choose category', true, true)
+    );
 
     this.sortOptions = new Array<SelectOption>(
-      new SelectOption('default', 'Choose sort', true, true),
       new SelectOption('asc', 'Title Ascending'),
       new SelectOption('desc', 'Title Descending')
+    );
+    this.sortOptions.unshift(
+      new SelectOption('default', 'Choose sort', true, true)
     );
   },
 });
