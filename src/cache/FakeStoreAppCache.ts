@@ -15,7 +15,7 @@ class FakeStoreAppCache implements IFakeStoreAppCache {
     private readonly cache_name: string;
 
     constructor() {
-        this.cache_name = process.env.VUE_APP_FAKE_STORE_API_CACHE_NAME;
+        this.cache_name = process.env.VUE_APP_FAKE_STORE_APP_CACHE_NAME;
     }
 
     private async open(): Promise<Cache> {
