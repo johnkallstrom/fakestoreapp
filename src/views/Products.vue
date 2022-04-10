@@ -55,6 +55,8 @@
           <Card
             :title="product.title"
             :text="product.description"
+            :subTitle="product.category"
+            :currencyText="product.price"
             :image="product.image"
             v-for="product in products"
             :key="product.id"

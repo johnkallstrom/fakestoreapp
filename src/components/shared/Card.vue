@@ -9,6 +9,10 @@
           <div class="card-body">
             <h5 class="card-title">{{ title }}</h5>
             <p class="card-text">{{ text }}</p>
+            <p class="card-text">
+              {{ currencyText }} <span v-show="showCurrencySymbol">&#36;</span>
+            </p>
+            <p class="card-text fw-bold">{{ subTitle }}</p>
           </div>
         </div>
       </div>
@@ -24,7 +28,14 @@ export default defineComponent({
   props: {
     title: String,
     text: String,
+    subTitle: String,
+    currencyText: String,
     image: String,
+  },
+  computed: {
+    showCurrencySymbol(): boolean {
+      return this.currencyText !== undefined;
+    },
   },
 });
 </script>

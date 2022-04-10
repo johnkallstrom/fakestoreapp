@@ -49,7 +49,10 @@ class ProductService implements IProductService {
             let description = item.description;
             description = capitalizeFirstLetter(description);
             description = trimString(description, this.max_description_limit) + '...';
-            return new Product(item.id, item.title, item.price, description, item.category, item.image, new Rating(item.rating.count, item.rating.rate));
+
+            let category = item.category;
+            category = capitalizeFirstLetter(category);
+            return new Product(item.id, item.title, item.price, description, category, item.image, new Rating(item.rating.count, item.rating.rate));
         });
 
         return products;
