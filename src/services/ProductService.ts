@@ -2,6 +2,7 @@ import Product from '../models/Product';
 import Rating from '@/models/Rating';
 import ProductQueryParameters from '@/parameters/ProductQueryParameters';
 import { trimString, capitalizeFirstLetter } from '../utils/index';
+import FakeStoreAppCache from '../cache/FakeStoreAppCache';
 
 interface IProductService {
     getProducts(parameters?: ProductQueryParameters): Promise<Array<Product>>
@@ -11,10 +12,12 @@ interface IProductService {
 class ProductService implements IProductService {
     private readonly base_url: string;
     private readonly max_description_limit: number;
+    private readonly cache: FakeStoreAppCache;
 
     constructor() {
         this.base_url = process.env.VUE_APP_FAKE_STORE_API_BASE_URL;
         this.max_description_limit = process.env.VUE_APP_MAX_DESCRIPTION_CHARACTER_LIMIT;
+        this.cache = new FakeStoreAppCache();
     }
 
     async getProducts(parameters?: ProductQueryParameters): Promise<Array<Product>> {
@@ -28,12 +31,19 @@ class ProductService implements IProductService {
             url = `${url}?sort=${parameters.sort}`;
         }
 
-        if (parameters?.limit !== undefined) {
-            url.includes('?') ? `${url}&limit=${parameters.limit}` : `${url}?limit=${parameters.limit}`;
-        }
+        let request = new Request(url);
+        let response: any = {};
+        let data: any = {};
 
-        const response = await fetch(url);
-        const data = await response.json();
+        response = await this.cache.get(request);
+
+        if (response !== undefined) {
+            data = await response.json();
+        } else {
+            await this.cache.add(request);
+            response = await fetch(request);
+            data = await response.json();
+        }
         
         let products = data.map((item: any) => {
             let description = item.description;
