@@ -42,7 +42,13 @@
             </select>
           </div>
           <div class="col-md-3 d-flex align-items-end">
-            <button class="btn btn-danger" @click="onFilterReset">Reset</button>
+            <button
+              class="btn btn-danger"
+              @click="onFilterReset"
+              :disabled="disableResetButton"
+            >
+              Reset
+            </button>
           </div>
         </div>
         <div class="row row-cols-1 row-cols-md-2 g-4">
@@ -109,11 +115,18 @@ export default defineComponent({
       this.products = await this.productService.getProducts(params);
     },
   },
+  computed: {
+    disableResetButton(): boolean {
+      return (
+        this.selectedSort === 'default' && this.selectedCategory === 'default'
+      );
+    },
+  },
   async created() {
     this.products = await this.productService.getProducts();
 
     let categories = await this.categoryService.getCategories();
-    this.categoryOptions = categories.map((item: Category, index: number) => {
+    this.categoryOptions = categories.map((item: Category) => {
       return new SelectOption(item.name.toLowerCase(), item.name);
     });
     this.categoryOptions.unshift(
